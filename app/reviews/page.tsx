@@ -1,21 +1,22 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Star, MessageSquare, TrendingUp, User, Send } from "lucide-react";
+import { Star, MessageSquare, TrendingUp, User, Send, MapPin } from "lucide-react";
 
-// Mock data for initial reviews
+// Updated mock data to include the branch
 const INITIAL_REVIEWS = [
-  { id: 1, name: "Arjun M.", rating: 5, date: "May 2, 2026", comment: "Absolutely flawless fade. Marcus and his team are true artists. The hot towel shave is a must-try experience." },
-  { id: 2, name: "David S.", rating: 5, date: "April 28, 2026", comment: "Best barbershop in Bangalore, hands down. The vibe is immaculate, the aesthetic is premium, and the service is elite." },
-  { id: 3, name: "Rohan K.", rating: 4, date: "April 15, 2026", comment: "Great atmosphere and a really sharp cut. Had to wait a few minutes past my appointment time, but the result was worth it." },
+  { id: 1, name: "Arjun M.", rating: 5, date: "May 2, 2026", branch: "Downtown Core", comment: "Absolutely flawless fade. Marcus and his team are true artists. The hot towel shave is a must-try experience." },
+  { id: 2, name: "David S.", rating: 5, date: "April 28, 2026", branch: "Tech Park East", comment: "Best barbershop in Bangalore, hands down. The vibe is immaculate, the aesthetic is premium, and the service is elite." },
+  { id: 3, name: "Rohan K.", rating: 4, date: "April 15, 2026", branch: "Downtown Core", comment: "Great atmosphere and a really sharp cut. Had to wait a few minutes past my appointment time, but the result was worth it." },
 ];
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState(INITIAL_REVIEWS);
   const [hoveredStar, setHoveredStar] = useState(0);
-  const [formData, setFormData] = useState({ name: "", rating: 5, comment: "" });
+  
+  // Added 'branch' to formData state
+  const [formData, setFormData] = useState({ name: "", rating: 5, branch: "Downtown Core", comment: "" });
 
-  // Analytics Calculations
   const totalReviews = reviews.length;
   const averageRating = (reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews).toFixed(1);
   const fiveStarCount = reviews.filter(r => r.rating === 5).length;
@@ -29,18 +30,17 @@ export default function ReviewsPage() {
       id: Date.now(),
       name: formData.name,
       rating: formData.rating,
+      branch: formData.branch,
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       comment: formData.comment,
     };
 
-    setReviews([newReview, ...reviews]); // Adds new review to the top of the list
-    setFormData({ name: "", rating: 5, comment: "" }); // Reset form
+    setReviews([newReview, ...reviews]);
+    setFormData({ name: "", rating: 5, branch: "Downtown Core", comment: "" }); 
   };
 
   return (
     <div className="relative container mx-auto px-6 py-24 min-h-screen max-w-7xl">
-      
-      {/* Premium Gold Ambient Glow */}
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[#FFCC00]/5 blur-[150px] pointer-events-none z-0 rounded-full mix-blend-screen" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#FFCC00]/5 blur-[120px] pointer-events-none z-0 rounded-full mix-blend-screen" />
 
@@ -53,8 +53,6 @@ export default function ReviewsPage() {
         
         {/* LEFT COLUMN: Analytics & Form */}
         <div className="lg:col-span-5 space-y-8">
-          
-          {/* Analytics Dashboard */}
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="glass-card bg-black/60 p-8 rounded-3xl border border-white/5">
             <h2 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
               <TrendingUp className="text-[#FFCC00]" size={20}/> Overall Rating
@@ -73,14 +71,12 @@ export default function ReviewsPage() {
             </div>
           </motion.div>
 
-          {/* Submission Form */}
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="glass-card bg-black/60 p-8 rounded-3xl border border-white/5">
             <h2 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
               <MessageSquare className="text-[#FFCC00]" size={20}/> Leave a Review
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               
-              {/* Interactive Star Rating */}
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-400 uppercase">Your Rating</label>
                 <div className="flex gap-2 cursor-pointer">
@@ -91,11 +87,7 @@ export default function ReviewsPage() {
                       onClick={() => setFormData({ ...formData, rating: star })}
                       onMouseEnter={() => setHoveredStar(star)}
                       onMouseLeave={() => setHoveredStar(0)}
-                      className={`transition-all ${
-                        star <= (hoveredStar || formData.rating) 
-                          ? "fill-[#FFCC00] text-[#FFCC00] scale-110" 
-                          : "text-gray-600 hover:text-gray-400"
-                      }`} 
+                      className={`transition-all ${star <= (hoveredStar || formData.rating) ? "fill-[#FFCC00] text-[#FFCC00] scale-110" : "text-gray-600 hover:text-gray-400"}`} 
                     />
                   ))}
                 </div>
@@ -113,6 +105,23 @@ export default function ReviewsPage() {
                     className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#FFCC00] transition-colors" 
                     placeholder="John Doe" 
                   />
+                </div>
+              </div>
+
+              {/* NEW: Branch Selection Dropdown */}
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-400 uppercase">Branch Visited</label>
+                <div className="relative">
+                  <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <select
+                    value={formData.branch}
+                    onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-[#FFCC00] transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="Downtown Core" className="bg-black text-white">Downtown Core</option>
+                    <option value="Tech Park East" className="bg-black text-white">Tech Park East</option>
+                    <option value="Luxury Hotel" className="bg-black text-white">Luxury Hotel</option>
+                  </select>
                 </div>
               </div>
 
@@ -146,10 +155,17 @@ export default function ReviewsPage() {
                 transition={{ delay: index * 0.1 }}
                 className="glass-card bg-black/40 p-6 sm:p-8 rounded-3xl border border-white/5 hover:border-[#FFCC00]/20 transition-colors"
               >
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                   <div>
                     <h3 className="font-bold text-lg text-white">{review.name}</h3>
-                    <p className="text-xs text-gray-500 font-medium tracking-widest uppercase mt-1">{review.date}</p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <p className="text-xs text-gray-500 font-medium tracking-widest uppercase">{review.date}</p>
+                      <span className="w-1 h-1 bg-gray-600 rounded-full" />
+                      {/* NEW: Branch display on the review card */}
+                      <p className="text-xs text-[#FFCC00] font-medium tracking-widest flex items-center gap-1">
+                        <MapPin size={12} /> {review.branch}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
