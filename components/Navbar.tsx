@@ -43,16 +43,13 @@ export default function Navbar() {
       >
         <div className="flex justify-between items-center px-5 sm:px-6 py-4 w-full relative z-10">
           
-          {/* THE WELDONE LOGO */}
+          {/* THE WELDONE LOGO - Image Version */}
           <Link href="/" className="group flex-shrink-0">
-            <div className="flex items-stretch p-[2px] border-2 border-[#FFCC00] bg-black group-hover:scale-105 transition-transform duration-500 shadow-[0_0_20px_rgba(255,204,0,0.15)]">
-              <div className="bg-[#FFCC00] px-2 sm:px-3 pt-1 pb-[2px] flex items-center justify-center">
-                <span className="font-sans font-black text-black text-[24px] sm:text-[28px] leading-[0.8] tracking-tighter uppercase">WEL</span>
-              </div>
-              <div className="bg-black px-2 sm:px-3 pt-1 pb-[2px] flex items-center justify-center">
-                <span className="font-sans font-black text-[#FFCC00] text-[24px] sm:text-[28px] leading-[0.8] tracking-tighter uppercase">DONE</span>
-              </div>
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Weldone Barbers Logo" 
+              className="h-10 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_15px_rgba(255,204,0,0.2)]"
+            />
           </Link>
 
           {/* Desktop Links */}
