@@ -148,8 +148,9 @@ export default function GalleryPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="relative max-w-5xl w-full max-h-[85vh] flex flex-col items-center"
-              onClick={(e) => e.stopPropagation()} // Prevent clicking image from closing modal
+              // Added pb-20 on mobile to push content away from the bottom controls
+              className="relative max-w-5xl w-full max-h-[85vh] flex flex-col items-center pb-20 sm:pb-0"
+              onClick={(e) => e.stopPropagation()} 
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
@@ -157,13 +158,15 @@ export default function GalleryPage() {
               <img 
                 src={GALLERY_DATA[selectedIndex].image} 
                 alt={GALLERY_DATA[selectedIndex].title} 
-                className="w-full h-full max-h-[75vh] object-contain rounded-lg shadow-2xl pointer-events-none" 
+                // Changed max-h-[75vh] to max-h-[55vh] for mobile, keeps [75vh] for sm and up
+                className="w-full h-full max-h-[55vh] sm:max-h-[75vh] object-contain rounded-lg shadow-2xl pointer-events-none" 
               />
-              <div className="mt-6 text-center">
-                <span className="bg-[#FFCC00]/10 text-[#FFCC00] border border-[#FFCC00]/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-3 inline-block">
+              {/* Adjusted margins to ensure text stays clear of the nav pill */}
+              <div className="mt-4 sm:mt-6 text-center z-10 relative">
+                <span className="bg-[#FFCC00]/10 text-[#FFCC00] border border-[#FFCC00]/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-2 sm:mb-3 inline-block">
                   {GALLERY_DATA[selectedIndex].category}
                 </span>
-                <h2 className="text-3xl font-bold text-white">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white px-4">
                   {GALLERY_DATA[selectedIndex].title}
                 </h2>
               </div>
