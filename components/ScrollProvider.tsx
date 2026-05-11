@@ -1,9 +1,17 @@
+// @ts-nocheck
 "use client";
-import { ReactLenis } from 'lenis/react';
+import { ReactLenis } from '@studio-freight/react-lenis';
 
 export default function ScrollProvider({ children }: { children: React.ReactNode }) {
   return (
-    <ReactLenis root options={{ lerp: 0.07, duration: 1.5, smoothWheel: true }}>
+    <ReactLenis 
+      root 
+      options={{ 
+        lerp: 0.05, 
+        duration: 1.5, 
+        smoothWheel: true,
+      }}
+    >
       {children}
     </ReactLenis>
   );

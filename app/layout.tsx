@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+    <html lang="en" className="overflow-x-hidden">
+      <body className={`${inter.className} antialiased overflow-x-hidden bg-[#050505] text-white`}>
         <ScrollProvider>
           <Navbar />
           <main className="pt-24 min-h-[100svh] flex flex-col">

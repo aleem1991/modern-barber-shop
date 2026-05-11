@@ -22,7 +22,7 @@ export default function ContactPage() {
     e.preventDefault(); 
     
     // YOUR EMAIL ADDED HERE
-    const targetEmail = "mraleem2004@gmail.com"; 
+    const targetEmail = "bifrostdigital360@gmail.com"; 
     
     const subject = encodeURIComponent(`New Inquiry from ${formData.firstName} ${formData.lastName}`);
     const body = encodeURIComponent(
@@ -75,7 +75,9 @@ export default function ContactPage() {
             <div className="w-16 h-16 rounded-full bg-[#FFCC00]/10 flex items-center justify-center text-[#FFCC00] group-hover:scale-110 transition-transform"><Mail size={28} /></div>
             <div>
               <h3 className="text-xl font-bold mb-1 text-white">Email Us</h3>
-              <p className="text-gray-400">mraleem2004@gmail.com</p>
+              <p className="text-gray-400">bifrostdigital360@gmail.com
+
+</p>
             </div>
           </div>
         </motion.div>

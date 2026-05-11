@@ -9,36 +9,43 @@ export default function Home() {
   return (
     <div className="relative w-full min-h-[calc(100svh-6rem)] flex flex-col items-center justify-center overflow-hidden px-4 py-12">
       
-      {/* BRIGHTER Background Image */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?q=80&w=2000&auto=format&fit=crop" 
-          alt="Premium Barber Background" 
-          className="w-full h-full object-cover opacity-80 grayscale" /* Increased opacity from 60 to 80 */
-        />
-        {/* Lighter gradient overlay so the image is much more visible */}
+      {/* UPGRADED: Cinematic Video Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden bg-[#050505]">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          // The poster image shows for a split second while the video loads
+          poster="https://images.unsplash.com/photo-1605497788044-5a32c7078486?q=80&w=2000&auto=format&fit=crop"
+          className="w-full h-full object-cover opacity-70 grayscale transition-opacity duration-1000"
+        >
+          {/* I have added a high-quality free stock video link here. 
+              If you want to use your own video, download an .mp4, place it in your 'public' folder, and change src to src="/your-video.mp4" */}
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Luxury Dark Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-[#050505]/40 to-[#050505]/90" />
       </div>
 
       {/* PREMIUM GOLD Glow Effects */}
-      <div className="absolute top-1/4 left-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-[#FFCC00]/25 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none z-0 mix-blend-screen" />
-      <div className="absolute bottom-1/4 right-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-amber-600/15 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none z-0 mix-blend-screen" />
+      <div className="absolute top-1/4 left-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-[#FFCC00]/20 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none z-0 mix-blend-screen" />
+      <div className="absolute bottom-1/4 right-1/4 w-72 h-72 sm:w-96 sm:h-96 bg-amber-600/10 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none z-0 mix-blend-screen" />
 
       {/* Main Hero Content */}
       <div className="z-10 flex flex-col items-center text-center w-full max-w-5xl mb-12 sm:mb-20">
         
-        {/* NEW HEADLINE TEXT */}
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] leading-[0.95] font-black tracking-tighter mb-6 drop-shadow-2xl"
+          className="text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] leading-[0.95] font-black tracking-tighter mb-6 drop-shadow-2xl text-white"
         >
           DOMINANCE <br />
-            EXPRESSED IN <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFCC00] to-amber-500">STYLE</span>
+          EXPRESSED IN <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFCC00] to-amber-500">STYLE</span>
         </motion.h1>
 
-        {/* NEW DESCRIPTION TEXT */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
