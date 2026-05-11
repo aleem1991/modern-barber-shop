@@ -3,8 +3,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 
-// You can add as many images here as you want (20, 50, 100+). 
-// The grid will automatically organize them cleanly!
 const GALLERY_DATA = [
   { id: 1, title: "Precision Fade", category: "Haircut", image: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=800&auto=format&fit=crop" },
   { id: 2, title: "Straight Razor Lineup", category: "Beard", image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop" },
@@ -18,22 +16,48 @@ const GALLERY_DATA = [
 
 export default function GalleryPage() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  
+  // Swipe State
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Minimum distance required for a swipe to trigger (in pixels)
+  const minSwipeDistance = 50;
 
   const openLightbox = (index: number) => setSelectedIndex(index);
   const closeLightbox = () => setSelectedIndex(null);
   
-  const showNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleNext = () => {
     if (selectedIndex !== null) {
       setSelectedIndex((selectedIndex + 1) % GALLERY_DATA.length);
     }
   };
 
-  const showPrev = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handlePrev = () => {
     if (selectedIndex !== null) {
       setSelectedIndex(selectedIndex === 0 ? GALLERY_DATA.length - 1 : selectedIndex - 1);
     }
+  };
+
+  // Touch Event Handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null); // Reset touch end
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) handleNext();
+    if (isRightSwipe) handlePrev();
   };
 
   return (
@@ -50,7 +74,7 @@ export default function GalleryPage() {
         <p className="text-gray-400 text-lg">A curated showcase of our finest craftsmanship.</p>
       </motion.div>
 
-      {/* THE GRID: Scales perfectly whether you have 4 images or 40 */}
+      {/* THE GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-7xl relative z-10">
         {GALLERY_DATA.map((item, index) => (
           <motion.div 
@@ -92,7 +116,7 @@ export default function GalleryPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeLightbox}
-            className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8"
+            className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 overflow-hidden touch-none"
           >
             {/* Close Button */}
             <button 
@@ -102,22 +126,22 @@ export default function GalleryPage() {
               <X size={32} />
             </button>
 
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows (Desktop) */}
             <button 
-              onClick={showPrev}
+              onClick={(e) => { e.stopPropagation(); handlePrev(); }}
               className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#FFCC00] hover:bg-white/5 p-3 sm:p-4 rounded-full transition-all z-50 hidden sm:block"
             >
               <ChevronLeft size={40} />
             </button>
             
             <button 
-              onClick={showNext}
+              onClick={(e) => { e.stopPropagation(); handleNext(); }}
               className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#FFCC00] hover:bg-white/5 p-3 sm:p-4 rounded-full transition-all z-50 hidden sm:block"
             >
               <ChevronRight size={40} />
             </button>
 
-            {/* Main Lightbox Image */}
+            {/* Main Lightbox Image with Swipe Handlers Added */}
             <motion.div 
               key={selectedIndex}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -126,11 +150,14 @@ export default function GalleryPage() {
               transition={{ duration: 0.3 }}
               className="relative max-w-5xl w-full max-h-[85vh] flex flex-col items-center"
               onClick={(e) => e.stopPropagation()} // Prevent clicking image from closing modal
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
             >
               <img 
                 src={GALLERY_DATA[selectedIndex].image} 
                 alt={GALLERY_DATA[selectedIndex].title} 
-                className="w-full h-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
+                className="w-full h-full max-h-[75vh] object-contain rounded-lg shadow-2xl pointer-events-none" 
               />
               <div className="mt-6 text-center">
                 <span className="bg-[#FFCC00]/10 text-[#FFCC00] border border-[#FFCC00]/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-3 inline-block">
@@ -142,11 +169,11 @@ export default function GalleryPage() {
               </div>
             </motion.div>
 
-            {/* Mobile Nav Controls (Visible only on small screens) */}
+            {/* Mobile Nav Controls Indicator */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 sm:hidden bg-black/50 border border-white/10 px-6 py-3 rounded-full backdrop-blur-md">
-              <button onClick={showPrev} className="text-white hover:text-[#FFCC00]"><ChevronLeft size={28} /></button>
+              <button onClick={(e) => { e.stopPropagation(); handlePrev(); }} className="text-white hover:text-[#FFCC00]"><ChevronLeft size={28} /></button>
               <span className="text-white/50 text-sm font-medium tracking-widest">{selectedIndex + 1} / {GALLERY_DATA.length}</span>
-              <button onClick={showNext} className="text-white hover:text-[#FFCC00]"><ChevronRight size={28} /></button>
+              <button onClick={(e) => { e.stopPropagation(); handleNext(); }} className="text-white hover:text-[#FFCC00]"><ChevronRight size={28} /></button>
             </div>
 
           </motion.div>
