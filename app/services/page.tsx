@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // The Complete Barbershop Menu Data with Premium Images
@@ -106,6 +106,21 @@ export default function ServicesPage() {
   const [activeCategory, setActiveCategory] = useState(SERVICE_CATEGORIES[0].id);
   const currentData = SERVICE_CATEGORIES.find(cat => cat.id === activeCategory);
 
+  // NEW: Create a reference object to hold all our category buttons
+  const buttonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+
+  // NEW: Automatically scroll the active button to the center
+  useEffect(() => {
+    const activeButton = buttonRefs.current[activeCategory];
+    if (activeButton) {
+      activeButton.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",  // This centers it horizontally!
+        block: "nearest"   // This prevents the whole page from jumping vertically
+      });
+    }
+  }, [activeCategory]);
+
   return (
     <div className="relative container mx-auto px-6 py-24 min-h-screen">
       
@@ -128,6 +143,10 @@ export default function ServicesPage() {
               return (
                 <button
                   key={category.id}
+                  // NEW: Attach this specific button to our refs object
+                  ref={(el) => {
+                    buttonRefs.current[category.id] = el;
+                  }}
                   onClick={() => setActiveCategory(category.id)}
                   className={`relative whitespace-nowrap text-left px-4 py-3 sm:py-4 rounded-xl transition-all duration-300 font-bold uppercase tracking-widest text-sm ${
                     isActive 
@@ -168,10 +187,8 @@ export default function ServicesPage() {
                   alt={currentData?.title} 
                   className="w-full h-full object-cover lg:grayscale hover:grayscale-0 transition-all duration-700"
                 />
-                {/* Dark Gradient Overlay so text is readable */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                 
-                {/* Floating Title over the image */}
                 <div className="absolute bottom-6 left-6 sm:bottom-8 sm:left-10">
                   <span className="text-[#FFCC00] text-xs font-bold tracking-widest uppercase mb-2 block drop-shadow-md">
                     WELDONE Signature
@@ -196,7 +213,6 @@ export default function ServicesPage() {
                       {item.name}
                     </span>
                     
-                    {/* The Dotted Leader */}
                     <div className="flex-grow border-b-2 border-dotted border-white/10 mx-6 group-hover:border-[#FFCC00]/30 transition-colors hidden sm:block" />
                     
                     <div className="flex items-start gap-1">
