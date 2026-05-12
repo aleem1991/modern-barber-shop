@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// The Complete Barbershop Menu Data with Premium Images
+// The Complete Barbershop Menu Data
 const SERVICE_CATEGORIES = [
   {
     id: "hair-cut",
@@ -106,17 +106,27 @@ export default function ServicesPage() {
   const [activeCategory, setActiveCategory] = useState(SERVICE_CATEGORIES[0].id);
   const currentData = SERVICE_CATEGORIES.find(cat => cat.id === activeCategory);
 
-  // NEW: Create a reference object to hold all our category buttons
   const buttonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+  
+  // NEW: Add a reference specifically for the scrolling container
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // NEW: Automatically scroll the active button to the center
+  // UPDATED: Custom scroll logic that only targets the menu container
   useEffect(() => {
     const activeButton = buttonRefs.current[activeCategory];
-    if (activeButton) {
-      activeButton.scrollIntoView({
-        behavior: "smooth",
-        inline: "center",  // This centers it horizontally!
-        block: "nearest"   // This prevents the whole page from jumping vertically
+    const container = scrollContainerRef.current;
+
+    // Only run this horizontal math on mobile screens where the container actually scrolls
+    if (activeButton && container && window.innerWidth < 768) {
+      const containerCenter = container.offsetWidth / 2;
+      const buttonCenter = activeButton.offsetLeft + (activeButton.offsetWidth / 2);
+      
+      // Calculate exactly how far the container needs to slide inside its own box
+      const scrollPos = buttonCenter - containerCenter;
+
+      container.scrollTo({
+        left: scrollPos,
+        behavior: "smooth"
       });
     }
   }, [activeCategory]);
@@ -124,10 +134,8 @@ export default function ServicesPage() {
   return (
     <div className="relative container mx-auto px-6 py-24 min-h-screen">
       
-      {/* Premium Gold Ambient Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#FFCC00]/5 blur-[150px] pointer-events-none z-0 rounded-full mix-blend-screen" />
 
-      {/* Page Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12 relative z-10">
         <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4 text-white">OUR <span className="text-[#FFCC00]">SERVICES</span></h1>
         <p className="text-gray-400 max-w-2xl mx-auto text-lg">Comprehensive grooming and wellness treatments.</p>
@@ -137,18 +145,21 @@ export default function ServicesPage() {
         
         {/* LEFT COLUMN: Category Navigation */}
         <div className="md:w-1/3 lg:w-1/4 flex-shrink-0">
-          <div className="sticky top-32 flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 hide-scrollbar border-b md:border-b-0 border-white/10 md:border-l border-white/10 md:pl-6">
+          {/* UPDATED: Added the scrollContainerRef here */}
+          <div 
+            ref={scrollContainerRef}
+            className="sticky top-32 flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 hide-scrollbar border-b md:border-b-0 border-white/10 md:border-l border-white/10 md:pl-6 relative"
+          >
             {SERVICE_CATEGORIES.map((category) => {
               const isActive = activeCategory === category.id;
               return (
                 <button
                   key={category.id}
-                  // NEW: Attach this specific button to our refs object
                   ref={(el) => {
                     buttonRefs.current[category.id] = el;
                   }}
                   onClick={() => setActiveCategory(category.id)}
-                  className={`relative whitespace-nowrap text-left px-4 py-3 sm:py-4 rounded-xl transition-all duration-300 font-bold uppercase tracking-widest text-sm ${
+                  className={`relative whitespace-nowrap text-left px-4 py-3 sm:py-4 rounded-xl transition-all duration-300 font-bold uppercase tracking-widest text-sm flex-shrink-0 ${
                     isActive 
                       ? "text-black bg-[#FFCC00] shadow-[0_0_20px_rgba(255,204,0,0.3)]" 
                       : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -179,8 +190,6 @@ export default function ServicesPage() {
               transition={{ duration: 0.4 }}
               className="glass-card bg-black/40 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col"
             >
-              
-              {/* CINEMATIC IMAGE HEADER */}
               <div className="relative w-full h-48 sm:h-64 lg:h-72">
                 <img 
                   src={currentData?.image} 
@@ -199,7 +208,6 @@ export default function ServicesPage() {
                 </div>
               </div>
 
-              {/* PRICE LIST SECTION */}
               <div className="p-6 sm:p-10 flex flex-col gap-2">
                 {currentData?.items.map((item, index) => (
                   <motion.div 
